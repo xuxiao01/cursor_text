@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--
+  用途：在浏览器中全屏显示当前系统时间（本地时区），每秒刷新。
+  创建日期：2026-03-29
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>当前时间</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d0f;
+      --text: #f4f4f5;
+      --muted: #71717a;
+      --accent: #22d3ee;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 1.5rem;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.12), transparent),
+        var(--bg);
+    }
+
+    .clock-wrap {
+      text-align: center;
+      max-width: 100%;
+    }
+
+    .time {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 700;
+      font-size: clamp(2.75rem, 12vw, 7rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 60px rgba(34, 211, 238, 0.15);
+    }
+
+    .time .sep {
+      color: var(--accent);
+      opacity: 0.85;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 0.35; }
+    }
+
+    .date {
+      margin-top: 1.25rem;
+      font-size: clamp(0.9rem, 2.5vw, 1.125rem);
+      color: var(--muted);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .weekday {
+      display: inline-block;
+      margin-left: 0.5rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-wrap">
+    <div class="time" id="time" aria-live="polite"></div>
+    <div class="date" id="date"></div>
+  </div>
+  <script>
+    (function () {
+      var timeEl = document.getElementById("time");
+      var dateEl = document.getElementById("date");
+
+      var weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+      function pad(n) {
+        return n < 10 ? "0" + n : String(n);
+      }
+
+      function tick() {
+        var now = new Date();
+        var h = pad(now.getHours());
+        var m = pad(now.getMinutes());
+        var s = pad(now.getSeconds());
+        timeEl.innerHTML = h + '<span class="sep">:</span>' + m + '<span class="sep">:</span>' + s;
+
+        var y = now.getFullYear();
+        var mo = pad(now.getMonth() + 1);
+        var d = pad(now.getDate());
+        dateEl.textContent = y + "年" + mo + "月" + d + "日";
+        var w = document.createElement("span");
+        w.className = "weekday";
+        w.textContent = weekdays[now.getDay()];
+        dateEl.appendChild(w);
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>
